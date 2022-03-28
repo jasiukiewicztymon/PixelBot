@@ -1,1 +1,6 @@
-# Minecraft-Discord-Bot
+# Minecraft Discord Bot
+
+- Hypixel stats 
+- Creation party channels 
+
+> Comming soon
