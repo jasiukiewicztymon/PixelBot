@@ -7,9 +7,9 @@ import io
 import aiohttp
 import requests
 import json
-from datetime import timezone
+import datetime 
 
-APIKEY = ""
+APIKEY = "api"
 
 def GetUserInfo(name):
     r = requests.get(f"https://api.hypixel.net/player?key={APIKEY}&name={name}")
@@ -171,4 +171,24 @@ async def status(ctx, *args):
     else:
         await ctx.reply(f"{name} is offline 🔴")
 
-bot.run('')
+@bot.command()
+async def recentgames(ctx, *args):  
+    name = args[0]
+    uuid = requests.get(f"https://api.mojang.com/users/profiles/minecraft/{name}")
+    uuid = uuid.json()
+    useruuid = uuid['id']
+
+    r = requests.get(f"https://api.hypixel.net/recentgames?key={APIKEY}&uuid={useruuid}")
+    r = r.json()
+
+    embed = discord.Embed(title=f"{name}'s recent games", description=f"Here are {args[1]} game list of {name}", colour=0x850F07)
+    for i in range(int(args[1])):
+        timestamp = datetime.datetime.fromtimestamp(r['games'][i]['date'] / 1e3)
+        date = timestamp.strftime("%d/%m/%Y")
+        hour = timestamp.strftime("%H:%M")
+
+        embed.add_field(name=f"{r['games'][i]['mode']}", value=f"Played {date} at {hour} on {r['games'][i]['map']}", inline=True)
+
+    await ctx.send(embed=embed)
+
+bot.run('token')
