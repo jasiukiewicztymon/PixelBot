@@ -4,6 +4,8 @@ from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.utils import get
 import asyncio
+import io
+import aiohttp
 
 bot = commands.Bot(command_prefix='.')
 
@@ -76,5 +78,23 @@ async def close(ctx, *args):
         await ctx.reply('You have closed: ' + vname)
     else:
         await ctx.reply('Invalid game type') 
+
+@bot.command()
+async def stats(ctx, *args):
+    if args[0] == 'user':
+        if args[1] == 'level':
+            async with aiohttp.ClientSession() as session:
+                async with session.get('https://gen.plancke.io/exp/{}.png'.format(args[2])) as resp:
+                    if resp.status != 200:
+                        return await ctx.reply('Could not download file...')
+                    data = io.BytesIO(await resp.read())
+                    await ctx.send(file=discord.File(data, '{}.png'.format(args[2])))
+        elif args[1] == 'point':
+                async with aiohttp.ClientSession() as session:
+                    async with session.get('https://gen.plancke.io/achievementPoints/{}.png'.format(args[2])) as resp:
+                        if resp.status != 200:
+                            return await ctx.reply('Could not download file...')
+                        data = io.BytesIO(await resp.read())
+                        await ctx.send(file=discord.File(data, '{}.png'.format(args[2])))
 
 bot.run('token')
