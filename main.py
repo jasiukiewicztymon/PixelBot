@@ -116,6 +116,59 @@ async def bans(ctx, *args):
 
 @bot.command()
 async def friends(ctx, *args):
-    
+    name = args[0]
+    uuid = requests.get(f"https://api.mojang.com/users/profiles/minecraft/{name}")
+    uuid = uuid.json()
+    useruuid = uuid['id']
+
+    r = requests.get(f"https://api.hypixel.net/friends?key={APIKEY}&uuid={useruuid}")
+    r = r.json()
+
+    embed = discord.Embed(title=f"{name}'s Friends", description=f"Here are all the {name} friends", colour=0x850F07)
+    for friend in r['records']:
+        sender = friend['uuidSender']
+        reciver = friend['uuidReceiver']
+
+        if sender == useruuid:
+            f = requests.get(f"https://api.hypixel.net/player?key={APIKEY}&uuid={reciver}")
+            f = f.json()
+            
+            try:
+                embed.add_field(name=f"{f['player']['displayname']}", value=f"Rank: {f['player']['packageRank']}", inline=True)
+            except:
+                embed.add_field(name=f"{f['player']['displayname']}", value=f"Rank: None", inline=True)
+        else:
+            f = requests.get(f"https://api.hypixel.net/player?key={APIKEY}&uuid={sender}")
+            f = f.json()
+
+            try:
+                embed.add_field(name=f"{f['player']['displayname']}", value=f"Rank: {f['player']['packageRank']}", inline=True)
+            except:
+                embed.add_field(name=f"{f['player']['displayname']}", value=f"Rank: None", inline=True)
+
+    await ctx.send(embed=embed)
+
+@bot.command()
+async def status(ctx, *args):
+    name = args[0]
+    uuid = requests.get(f"https://api.mojang.com/users/profiles/minecraft/{name}")
+    uuid = uuid.json()
+    useruuid = uuid['id']
+
+    r = requests.get(f"https://api.hypixel.net/status?key={APIKEY}&uuid={useruuid}")
+    r = r.json()
+
+    if r['session']['online'] == True:
+        try:
+            mode = r['session']['mode'].lower()
+            gameType = r['session']['gameType'].lower()
+            mapName = r['session']['map'].lower()
+            await ctx.reply(f"{name} plays {gameType} on the {mapName} map 🟢")
+        except:
+            mode = r['session']['mode'].lower()
+            gameType = r['session']['gameType'].lower()
+            await ctx.reply(f"{name} plays {mode} in {gameType} 🟢")
+    else:
+        await ctx.reply(f"{name} is offline 🔴")
 
 bot.run('')
