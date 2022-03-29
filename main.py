@@ -1,11 +1,19 @@
 import discord
-import json
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.utils import get
 import asyncio
 import io
 import aiohttp
+import requests
+import json
+from datetime import timezone
+
+APIKEY = ""
+
+def GetUserInfo(name):
+    r = requests.get(f"https://api.hypixel.net/player?key={APIKEY}&name={name}")
+    return r.json()
 
 bot = commands.Bot(command_prefix='.')
 
@@ -97,4 +105,17 @@ async def stats(ctx, *args):
                         data = io.BytesIO(await resp.read())
                         await ctx.send(file=discord.File(data, '{}.png'.format(args[2])))
 
-bot.run('token')
+@bot.command()
+async def bans(ctx, *args):
+    r = requests.get(f"https://api.hypixel.net/watchdogstats?key={APIKEY}")
+    r = r.json()
+    embed = discord.Embed(title="Hypixel's bans", description="Here are the ban stats on Hypixel", colour=0x850F07)
+    embed.add_field(name="Total", value=r['staff_total'], inline=True)
+    embed.add_field(name="Today", value=r['staff_rollingDaily'], inline=True)
+    await ctx.send(embed=embed)
+
+@bot.command()
+async def friends(ctx, *args):
+    
+
+bot.run('')
