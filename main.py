@@ -6,6 +6,7 @@ import asyncio
 import io
 import aiohttp
 import requests
+import base64
 import json
 import datetime 
 
@@ -211,5 +212,28 @@ async def namehistory(ctx, *args):
             embed.add_field(name=r[i]['name'], value=f"{date} {hour}", inline=True)
 
     await ctx.send(embed=embed)
+
+@bot.command()
+async def skin(ctx, *args): 
+    name = args[0]
+    uuid = requests.get(f"https://api.mojang.com/users/profiles/minecraft/{name}")
+    uuid = uuid.json()
+    useruuid = uuid['id']
+
+    r = requests.get(f"https://sessionserver.mojang.com/session/minecraft/profile/{useruuid}")
+    r = r.json()
+
+    key = r['properties'][0]['value']
+    bkey = base64.b64decode(key)
+    dkey = bkey.decode('ascii')
+
+    dkey = json.loads(dkey)
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(dkey['textures']['SKIN']['url']) as resp:
+            if resp.status != 200:
+                return await ctx.reply('Could not download file...')
+            data = io.BytesIO(await resp.read())
+            await ctx.send(file=discord.File(data, '{}.png'.format(args[0])))
 
 bot.run('token')
