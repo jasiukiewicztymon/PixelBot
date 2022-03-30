@@ -7,6 +7,12 @@
  
 ***
 
+## Help command
+
+Some help for the bot
+
+![image](https://user-images.githubusercontent.com/73474137/160898611-fb01a853-332c-49b1-a8a0-bbe57dc70bc2.png)
+
 ## General Minecraft commands
 
 Some of Minecraft command which you can use
