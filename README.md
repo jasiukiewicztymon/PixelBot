@@ -7,6 +7,18 @@
  
 ***
 
+## General Minecraft commands
+
+Some of Minecraft command which you can use
+
+***.namehistory [pseudo]***
+
+![image](https://user-images.githubusercontent.com/73474137/160841229-d3f0626b-4cb2-42eb-8919-43b40e0e8592.png)
+
+***.skin [pseudo]***
+
+![image](https://user-images.githubusercontent.com/73474137/160841289-c1e6abd5-825b-40f8-bce8-3b4767ad38ef.png)
+
 ## Minecraft Hypixel commands
 
 Some of Hypixel command which you can use 
