@@ -11,6 +11,12 @@
 
 Some of Minecraft command which you can use
 
+***.serverstatus [ip]***
+
+![image](https://user-images.githubusercontent.com/73474137/160867713-342d3b3f-3309-49f1-b88f-f20e72999711.png)
+
+![image](https://user-images.githubusercontent.com/73474137/160867844-4b98baf9-17b8-4f27-abc9-22637bd16f55.png)
+
 ***.namehistory [pseudo]***
 
 ![image](https://user-images.githubusercontent.com/73474137/160841229-d3f0626b-4cb2-42eb-8919-43b40e0e8592.png)
