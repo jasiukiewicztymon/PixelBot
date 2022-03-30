@@ -9,7 +9,7 @@ import requests
 import json
 import datetime 
 
-APIKEY = "api"
+APIKEY = "key"
 
 def GetUserInfo(name):
     r = requests.get(f"https://api.hypixel.net/player?key={APIKEY}&name={name}")
@@ -188,6 +188,27 @@ async def recentgames(ctx, *args):
         hour = timestamp.strftime("%H:%M")
 
         embed.add_field(name=f"{r['games'][i]['mode']}", value=f"Played {date} at {hour} on {r['games'][i]['map']}", inline=True)
+
+    await ctx.send(embed=embed)
+
+@bot.command()
+async def namehistory(ctx, *args): 
+    name = args[0]
+    uuid = requests.get(f"https://api.mojang.com/users/profiles/minecraft/{name}")
+    uuid = uuid.json()
+    useruuid = uuid['id']
+
+    r = requests.get(f"https://api.mojang.com/user/profile/{useruuid}/names")
+    r = r.json()
+
+    embed = discord.Embed(title=f"{name} names history", description=f"Current pseudo is {name}", colour=0x850F07)
+    for i in range(len(r)):
+        if i != 0:
+            timestamp = datetime.datetime.fromtimestamp(r[i]['changedToAt'] / 1e3)
+            date = timestamp.strftime("%d/%m/%Y")
+            hour = timestamp.strftime("%H:%M")
+            
+            embed.add_field(name=r[i]['name'], value=f"{date} {hour}", inline=True)
 
     await ctx.send(embed=embed)
 
