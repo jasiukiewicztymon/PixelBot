@@ -236,4 +236,28 @@ async def skin(ctx, *args):
             data = io.BytesIO(await resp.read())
             await ctx.send(file=discord.File(data, '{}.png'.format(args[0])))
 
+@bot.command()
+async def serverstatus(ctx, *args): 
+    ip = args[0]
+    r = requests.get(f"https://api.mcsrvstat.us/2/{ip}")
+    r = r.json()
+
+    status = r['online'] 
+    if status:
+        status = 'online 🟢'
+    else:
+        status = 'offline 🔴'
+
+    embed = discord.Embed(title=f"{ip}'s server status", description=f"The server is {status}", colour=0x850F07)
+
+    if status == 'online 🟢':
+        embed.add_field(name='Max players', value=f"{r['players']['max']}", inline=True)
+        embed.add_field(name='Online players', value=f"{r['players']['online']}", inline=False)
+        embed.add_field(name='Versions', value=f"{r['version']}", inline=True)
+        embed.add_field(name='Ip', value=f"{r['hostname']}", inline=True)
+    else:
+        embed.add_field(name='Ip', value=f"{r['hostname']}", inline=True)
+
+    await ctx.send(embed=embed)
+
 bot.run('token')
