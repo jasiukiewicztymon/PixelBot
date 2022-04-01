@@ -20,7 +20,7 @@ async def help(ctx, *args):
     embed.add_field(name="Player's skin", value=".skin [username]", inline=True)
     embed.add_field(name="Server status", value=".serverstatus [server_ip]", inline=True)
     embed.add_field(name="Player's name history", value=".namehistory [username]", inline=True)
-    embed.add_field(name="Hypixel user stats command", value=".stats <user> <level/point> [username]", inline=True)
+    embed.add_field(name="Hypixel user stats command", value=".user <level/point> [username]", inline=True)
     embed.add_field(name="Hypixel ban info", value=".bans", inline=True)
     embed.add_field(name="Hypixel friend list", value=".friends [username]", inline=True)
     embed.add_field(name="Hypixel player activity status", value=".status [username]", inline=True)
@@ -28,22 +28,21 @@ async def help(ctx, *args):
     await ctx.send(embed=embed)
 
 @bot.command()
-async def stats(ctx, *args):
-    if args[0] == 'user':
-        if args[1] == 'level':
+async def user(ctx, *args):
+    if args[0] == 'level':
+        async with aiohttp.ClientSession() as session:
+            async with session.get('https://gen.plancke.io/exp/{}.png'.format(args[1])) as resp:
+                if resp.status != 200:
+                    return await ctx.reply('Could not download file...')
+                data = io.BytesIO(await resp.read())
+                await ctx.send(file=discord.File(data, '{}.png'.format(args[1])))
+    elif args[0] == 'point':
             async with aiohttp.ClientSession() as session:
-                async with session.get('https://gen.plancke.io/exp/{}.png'.format(args[2])) as resp:
+                async with session.get('https://gen.plancke.io/achievementPoints/{}.png'.format(args[1])) as resp:
                     if resp.status != 200:
                         return await ctx.reply('Could not download file...')
                     data = io.BytesIO(await resp.read())
-                    await ctx.send(file=discord.File(data, '{}.png'.format(args[2])))
-        elif args[1] == 'point':
-                async with aiohttp.ClientSession() as session:
-                    async with session.get('https://gen.plancke.io/achievementPoints/{}.png'.format(args[2])) as resp:
-                        if resp.status != 200:
-                            return await ctx.reply('Could not download file...')
-                        data = io.BytesIO(await resp.read())
-                        await ctx.send(file=discord.File(data, '{}.png'.format(args[2])))
+                    await ctx.send(file=discord.File(data, '{}.png'.format(args[1])))
 
 @bot.command()
 async def bans(ctx, *args):
