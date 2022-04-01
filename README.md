@@ -11,7 +11,7 @@
 
 Some help for the bot
 
-![image](https://user-images.githubusercontent.com/73474137/160898611-fb01a853-332c-49b1-a8a0-bbe57dc70bc2.png)
+![image](https://user-images.githubusercontent.com/73474137/161224351-085d8366-b580-4ee2-9140-2874f162868e.png)
 
 ## General Minecraft commands
 
@@ -37,11 +37,11 @@ Some of Hypixel command which you can use
 
 ### Player stats
 
-***.stats user level [pseudo]***
+***.user level [pseudo]***
 
 ![image](https://user-images.githubusercontent.com/73474137/160712334-8ade2d7f-1f2c-42e4-a041-b777bafadaf2.png)
 
-***.stats user point [pseudo]***
+***.user point [pseudo]***
 
 ![image](https://user-images.githubusercontent.com/73474137/160712431-045a1d6d-16ec-4f94-9167-36a80899553c.png)
 
