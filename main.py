@@ -12,7 +12,7 @@ import datetime
 import os
 from os.path import exists
 
-APIKEY = "key"
+APIKEY = "07d27d62-5b6d-45c9-a516-3a34883a4cbd"
 
 bot = commands.Bot(command_prefix='.', help_command=None)
 
@@ -43,15 +43,77 @@ async def party(ctx, *args):
         else:
             await ctx.reply('Invalid argument')
     elif args[0] == 'disconnect':
-        os.remove(NAME)
-        await ctx.reply('Party disconnected ✅')
-    else:
-        # all other commands
-        file = open(NAME)
-        serverdata = json.load(file)
+        if args[1] == 'true':
+            file = open(NAME)
+            serverdata = json.load(file)
+            file.close()
 
+            if exists(NAME):
+                if serverdata['category'] == 0:
+                    for gm in serverdata['gamemode']:
+                        for channel in gm: 
+                            c = bot.get_channel(channel['id'])
+                            await c.delete()
+                else:
+                    for gm in serverdata['gamemode']:
+                        for channel in gm['channels']: 
+                            c = bot.get_channel(channel['id'])
+                            await c.delete()
+                os.remove(NAME)
+                await ctx.reply('Party disconnected ✅')
+
+        elif args[1] == 'false':
+            if exists(NAME):
+                os.remove(NAME)
+            await ctx.reply('Party disconnected ✅')
+        else:
+            await ctx.reply('Invalid argument')
+    else:
         if exists(NAME):
-            print('exist')
+            file = open(NAME)
+            serverdata = json.load(file)
+
+            if args[0] == 'gamemode':
+                if args[1] == 'add': 
+                    name = ""
+                    for i in range(len(args)):
+                        if i != 0:
+                            name += args[i] + " "
+
+                    name = name[0:(len(name)-1)]
+                    info = {
+                        "name": name,
+                        "channels": []
+                    }
+
+                    isgm = False
+
+                    for g in serverdata['gamemode']:
+                        if g['name'] == name:
+                            isgm = True
+
+                    if not isgm:
+                        serverdata['gamemode'].append(info)
+                        with open(NAME, 'w', encoding='utf8') as outfile:
+                            outdata = json.dumps(serverdata, ensure_ascii=False)
+                            outfile.write(outdata)
+                        await ctx.reply(f'{name}\'s category created')
+                    else:
+                        await ctx.reply(f'The {name} category already exists')
+                elif args[1] == 'del':
+                    for i in range(len(serverdata['gamemode'])):
+                        if serverdata['gamemode'][i]['name'] == args[2]:
+                            for ch in serverdata['gamemode'][i]['channels']:
+                                channel = discord.utils.get(ctx.guild.channels, id=ch['id'])
+                                await channel.delete()
+                            del serverdata['gamemode'][i]
+                            break
+                    await ctx.reply(f"{args[2]} has been remove from gamemodes")
+                else:
+                    await ctx.reply('Invalide argument')
+                    
+        else:
+            await ctx.reply('Setup the server settings to use this command')
 
 @bot.command()
 async def help(ctx, *args):
@@ -238,4 +300,4 @@ async def serverstatus(ctx, *args):
 
     await ctx.send(embed=embed)
 
-bot.run('token')
+bot.run('OTU4MDQ2NDAzNzU2NjkxNDg3.YkHoPg.tY2iLJOf-grL62J9-RbIrmQ261c')
