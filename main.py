@@ -9,10 +9,49 @@ import requests
 import base64
 import json
 import datetime 
+import os
+from os.path import exists
 
 APIKEY = "key"
 
 bot = commands.Bot(command_prefix='.', help_command=None)
+
+@bot.command()
+async def party(ctx, *args): 
+    NAME = '{}.config.json'.format(ctx.message.guild.id)
+    if args[0] == 'setup':
+        if args[1] == 'id':
+            party = {
+                "category": 0,
+                "category_id": int(args[2]),
+                "gamemode": []    
+            }
+            with open(NAME, 'w', encoding='utf8') as outfile:
+                outdata = json.dumps(party, ensure_ascii=False)
+                outfile.write(outdata)
+            await ctx.reply('Party created ✅')
+        elif args[1] == 'name':
+            party = {
+                "category": 1,
+                "category_name": args[2],
+                "gamemode": []    
+            }
+            with open(NAME, 'w', encoding='utf8') as outfile:
+                outdata = json.dumps(party, ensure_ascii=False)
+                outfile.write(outdata)
+            await ctx.reply('Party created ✅')
+        else:
+            await ctx.reply('Invalid argument')
+    elif args[0] == 'disconnect':
+        os.remove(NAME)
+        await ctx.reply('Party disconnected ✅')
+    else:
+        # all other commands
+        file = open(NAME)
+        serverdata = json.load(file)
+
+        if exists(NAME):
+            print('exist')
 
 @bot.command()
 async def help(ctx, *args):
