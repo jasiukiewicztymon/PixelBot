@@ -12,7 +12,7 @@ import datetime
 import os
 from os.path import exists
 
-APIKEY = "key"
+APIKEY = "24e9d447-55d7-4ed8-958c-0f6a97c92805"
 
 bot = commands.Bot(command_prefix='.', help_command=None)
 
@@ -111,7 +111,13 @@ async def party(ctx, *args):
                     await ctx.reply(f"{args[2]} has been remove from gamemodes")
                 else:
                     await ctx.reply('Invalide argument')
-                    
+
+            elif args[0] == "create":
+                await ctx.reply('Invalide argument')
+            elif atgs[1] == "delete":
+                await ctx.reply('Invalide argument')
+            else:
+                await ctx.reply('Invalide argument')                 
         else:
             await ctx.reply('Setup the server settings to use this command')
 
@@ -300,4 +306,4 @@ async def serverstatus(ctx, *args):
 
     await ctx.send(embed=embed)
 
-bot.run('token')
+bot.run('OTU4MDQ2NDAzNzU2NjkxNDg3.YkHoPg.BQuyeYeFNQ2K_bxL1sWf8Yi7Fn4')
