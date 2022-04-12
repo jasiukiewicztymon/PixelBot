@@ -12,7 +12,7 @@ import datetime
 import os
 from os.path import exists
 
-APIKEY = "24e9d447-55d7-4ed8-958c-0f6a97c92805"
+APIKEY = "key"
 
 bot = commands.Bot(command_prefix='.', help_command=None)
 
@@ -306,4 +306,4 @@ async def serverstatus(ctx, *args):
 
     await ctx.send(embed=embed)
 
-bot.run('OTU4MDQ2NDAzNzU2NjkxNDg3.YkHoPg.BQuyeYeFNQ2K_bxL1sWf8Yi7Fn4')
+bot.run('token')
