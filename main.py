@@ -138,7 +138,7 @@ async def party(ctx, *args):
                         else:
                             category = discord.utils.get(guild.categories, name=serverdata['category_name'])
 
-                        vc = await guild.create_voice_channel((gm['name'] + ' ' + str(gm['index'])), category=category)
+                        vc = await guild.create_voice_channel((gm['name'] + ' #' + str(gm['index'])), category=category)
                         tc = await guild.create_text_channel((gm['name'] + '-' + str(gm['index'])), category=category)
                         
                         box1 = {
@@ -159,8 +159,31 @@ async def party(ctx, *args):
                         break
                 await ctx.reply('The channels have been created ✅')
             elif args[1] == "delete":
+                if len(args) >= 4:
+                    try:
+                        index = int(args[-1])
 
-                await ctx.reply('The channels have been deleted ✅')
+                        name = ""
+                        for i in range(len(args) - 1):
+                            if i >= 2:
+                                name += args[i] + " "
+
+                        name = name[0:(len(name)-1)]
+
+                        for gm in serverdata['gamemode']:
+                            if gm['name'] == name:
+                                for ch in gm['channels']:
+                                    if ch['index'] == index:
+                                        channel = bot.get_channel(ch['id'])
+                                        await channel.delete()
+                                        # here
+                                break
+
+                        await ctx.reply('The channels have been deleted ✅')
+                    except:
+                        await ctx.reply('Invalide argument') 
+                else:
+                    await ctx.reply('Invalide argument') 
             else:
                 await ctx.reply('Invalide argument') 
 
