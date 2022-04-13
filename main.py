@@ -1,3 +1,5 @@
+from asyncio.windows_events import NULL
+from operator import index
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
@@ -18,6 +20,7 @@ bot = commands.Bot(command_prefix='.', help_command=None)
 
 @bot.command()
 async def party(ctx, *args): 
+    guild = ctx.guild
     NAME = '{}.config.json'.format(ctx.message.guild.id)
     if args[0] == 'setup':
         if args[1] == 'id':
@@ -77,12 +80,13 @@ async def party(ctx, *args):
                 if args[1] == 'add': 
                     name = ""
                     for i in range(len(args)):
-                        if i != 0:
+                        if i >= 2:
                             name += args[i] + " "
 
                     name = name[0:(len(name)-1)]
                     info = {
                         "name": name,
+                        "index": 1,
                         "channels": []
                     }
 
@@ -101,23 +105,68 @@ async def party(ctx, *args):
                     else:
                         await ctx.reply(f'The {name} category already exists')
                 elif args[1] == 'del':
+                    name = ""
+                    for i in range(len(args)):
+                        if i >= 2:
+                            name += args[i] + " "
+
+                    name = name[0:(len(name)-1)]
+
                     for i in range(len(serverdata['gamemode'])):
-                        if serverdata['gamemode'][i]['name'] == args[2]:
+                        if serverdata['gamemode'][i]['name'] == name:
                             for ch in serverdata['gamemode'][i]['channels']:
                                 channel = discord.utils.get(ctx.guild.channels, id=ch['id'])
                                 await channel.delete()
                             del serverdata['gamemode'][i]
                             break
-                    await ctx.reply(f"{args[2]} has been remove from gamemodes")
+                    await ctx.reply(f"{name} has been remove from gamemodes")
                 else:
                     await ctx.reply('Invalide argument')
 
             elif args[0] == "create":
-                await ctx.reply('Invalide argument')
-            elif atgs[1] == "delete":
-                await ctx.reply('Invalide argument')
+                name = ""
+                for i in range(len(args)):
+                    if i >= 2:
+                        name += args[i] + " "
+
+                name = name[0:(len(name)-1)]
+                for gm in serverdata['gamemode']:
+                    if gm['name'] == name:
+                        category = NULL
+                        if serverdata['category'] == 0:
+                            category = discord.utils.get(guild.categories, id=serverdata['category_id'])
+                        else:
+                            category = discord.utils.get(guild.categories, name=serverdata['category_name'])
+
+                        vc = await guild.create_voice_channel((gm['name'] + ' ' + str(gm['index'])), category=category)
+                        tc = await guild.create_text_channel((gm['name'] + '-' + str(gm['index'])), category=category)
+                        
+                        box1 = {
+                            "index": gm["index"],
+                            "id": vc.id
+                        }
+
+                        box2 = {
+                            "index": gm["index"],
+                            "id": tc.id
+                        }
+
+                        gm['channels'].append(box1)
+                        gm['channels'].append(box2)
+
+                        gm["index"] += 1
+
+                        break
+                await ctx.reply('The channels have been created ✅')
+            elif args[1] == "delete":
+
+                await ctx.reply('The channels have been deleted ✅')
             else:
-                await ctx.reply('Invalide argument')                 
+                await ctx.reply('Invalide argument') 
+
+            with open(NAME, 'w', encoding='utf8') as outfile:
+                outdata = json.dumps(serverdata, ensure_ascii=False)
+                outfile.write(outdata)                
         else:
             await ctx.reply('Setup the server settings to use this command')
 
